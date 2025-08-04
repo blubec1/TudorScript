@@ -1,0 +1,5 @@
+READ a
+PRINT a
+SET b 12
+ADD a b
+PRINT a
