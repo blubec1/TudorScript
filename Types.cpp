@@ -64,7 +64,7 @@ Keyword FindKeyword(char* token) {
     return UNKNOWNKEYWORD;
 }
 
-void HandleKeyword(unordered_map<char*, int> variables, char* token) {
+void HandleKeyword(unordered_map<char*, int>& variables, char* token) {
     Keyword foundKeyword = FindKeyword(token);
     switch (foundKeyword) {
         case SET:
