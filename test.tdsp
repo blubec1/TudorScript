@@ -1,5 +1,9 @@
-READ a
-PRINT a
-SET b 12
-ADD a b
-PRINT a
+SET a 2
+ARRAY abc 3
+SETINDEX abc 0 a
+SET a 3
+SETINDEX abc 1 a
+GETINDEX abc b 0
+PRINT b
+GETINDEX abc b 1
+PRINT b

@@ -3,9 +3,6 @@
 #include<cstring>
 using namespace std;
 
-const int nrOfKeywords = 4;
-const char* keywords[] = {"SET","ADD","PRINT","READ"};
-
 Type detType(string word) {
     if (isKeyword(word)) {
         return KEYWORD;
@@ -64,7 +61,7 @@ Keyword FindKeyword(string token) {
     return UNKNOWNKEYWORD;
 }
 
-void HandleKeyword(unordered_map<string, int>& variables, vector<string>& tokens) {
+void HandleKeyword(unordered_map<string, vector<int>>& arrays, unordered_map<string, int>& variables, vector<string>& tokens) {
     Keyword foundKeyword = FindKeyword(tokens[0]);
     switch (foundKeyword) {
         case SET:
@@ -78,6 +75,15 @@ void HandleKeyword(unordered_map<string, int>& variables, vector<string>& tokens
             break;
         case READ:
             SolveREAD(variables, tokens);
+            break;
+        case ARRAY:
+            SolveARRAY(arrays, tokens);
+            break;
+        case SETINDEX:
+            SolveSETINDEX(arrays, variables, tokens);
+            break;
+        case GETINDEX:
+            SolveGETINDEX(arrays, variables, tokens);
             break;
         default:
             cout << "Unknown keyword/n";
@@ -169,4 +175,91 @@ void SolveREAD(unordered_map<string, int>& variables, vector<string>& tokens)
 
     variables[variableName] = ivalue;
     return;
+}
+
+void SolveARRAY(unordered_map<string, vector<int>>& arrays, vector<string>& tokens)
+{
+    string arrayName = tokens[1];
+    int size;
+    try {
+        size = stoi(tokens[2]);
+    } catch (exception& e) {
+        cout << "Error: Size is not a valid integer.\n";
+        return;
+    }
+
+    arrays[arrayName] = vector<int>(size, 0); // Initialize array with zeros
+}
+
+void SolveSETINDEX(unordered_map<string, vector<int>>& arrays, unordered_map<string, int>& variables, vector<string>& tokens)
+{
+    string arrayName = tokens[1];
+    int index;
+    try {
+        index = stoi(tokens[2]);
+    } catch (exception& e) {
+        cout << "Error: Index is not a valid integer.\n";
+        return;
+    }
+
+    string value = tokens[3];
+    
+    if(arrays.find(arrayName) == arrays.end()) {
+        cout << "Error: Array does not exist.\n";
+        return;
+    }
+    
+    if(index < 0 || index >= arrays[arrayName].size()) {
+        cout << "Error: Index out of bounds.\n";
+        return;
+    }
+
+    if(value.empty()) {
+        cout << "Error: SETINDEX command requires a valid array name.\n";
+        return;
+    }
+
+    if(isVariable(value) && variables.find(value) != variables.end())
+    {
+        arrays[arrayName][index] = variables[value];
+        return;
+    }
+    else if(isConstant(value))
+    {
+        try{
+            int ivalue = stoi(value);
+            arrays[arrayName][index] = ivalue;
+        }
+        catch (exception& e) {
+            cout << "Error: Value is not a valid integer.\n";
+        }
+        return;
+    }
+}
+
+void SolveGETINDEX(unordered_map<string, vector<int>>& arrays, unordered_map<string, int>& variables, vector<string>& tokens)
+{
+
+    string arrayName = tokens[1];
+    string variableName = tokens[2];
+    int index;
+    try {
+        index = stoi(tokens[3]);
+    } catch (exception& e) {
+        cout << "Error: Index is not a valid integer.\n";
+        return;
+    }
+
+    if(arrays.find(arrayName) == arrays.end()) {
+        cout << "Error: Array does not exist.\n";
+        return;
+    }
+    
+    if(index < 0 || index >= arrays[arrayName].size()) {
+        cout << "Error: Index out of bounds.\n";
+        return;
+    }
+
+    variables[variableName] = arrays[arrayName][index];
+
 }

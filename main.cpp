@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
     */
     vector<string> tokens;
     unordered_map<string, int> variables;
+    unordered_map<string, vector<int>> arrays;
     buffer = new char[maxCharactersperLine];
     tokens.reserve(maxCharactersperLine);
     //path = argv[1];
@@ -50,23 +51,8 @@ int main(int argc, char *argv[])
         Tokenize(buffer, tokens);
 
         Type wordType = detType(tokens[0]);
-
-        switch(wordType)
-        {
-            case KEYWORD:
-                HandleKeyword(variables, tokens);
-                break;
-            /*    
-            case VARIABLE:
-                HandleVariable(token);  
-                break;
-             case CONSTANT:
-                HandleConstant(token);
-                break;
-            */
-            default:
-                cout<<"Unknown type for word:"<<endl;
-        }
+        
+        HandleKeyword(arrays, variables, tokens);
     }
     fclose(fptr);
 
