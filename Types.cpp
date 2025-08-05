@@ -6,7 +6,7 @@ using namespace std;
 const int nrOfKeywords = 4;
 const char* keywords[] = {"SET","ADD","PRINT","READ"};
 
-Type detType(char* word) {
+Type detType(string word) {
     if (isKeyword(word)) {
         return KEYWORD;
     } else if (isVariable(word)) {
@@ -18,20 +18,20 @@ Type detType(char* word) {
     }
 }
 
-bool isKeyword(char* word) {
+bool isKeyword(string word) {
     for (int i = 0; i < nrOfKeywords; ++i) {
-        if (strcmp(word, keywords[i]) == 0) {
+        if (word == keywords[i]) {
             return true;
         }
     }
     return false;
 }
 
-bool isVariable(char* word) {
+bool isVariable(string word) {
     if ('0' <= word[0] && word[0] <= '9') {
         return false;
     }
-    for (int i = 1; i < strlen(word); ++i) {
+    for (int i = 1; i < word.length(); ++i) {
         if(word[i] == '\n')
             continue;
         if (!('a' <= word[i] && word[i] <= 'z') &&
@@ -44,8 +44,8 @@ bool isVariable(char* word) {
     return true;
 }
 
-bool isConstant(char* word) {
-    for (int i = 0; i < strlen(word); ++i) {
+bool isConstant(string word) {
+    for (int i = 0; i < word.length(); ++i) {
         if(word[i] == '\n')
             continue;
         if (!('0' <= word[i] && word[i] <= '9')) {
@@ -55,53 +55,49 @@ bool isConstant(char* word) {
     return true;
 }
 
-Keyword FindKeyword(char* token) {
+Keyword FindKeyword(string token) {
     for (int i = 0; i < nrOfKeywords; ++i) {
-        if (strcmp(token, keywords[i]) == 0) {
+        if (token== keywords[i]) {
             return (Keyword)i;
         }
     }
     return UNKNOWNKEYWORD;
 }
 
-void HandleKeyword(unordered_map<char*, int>& variables, char* token) {
-    Keyword foundKeyword = FindKeyword(token);
+void HandleKeyword(unordered_map<string, int>& variables, vector<string>& tokens) {
+    Keyword foundKeyword = FindKeyword(tokens[0]);
     switch (foundKeyword) {
         case SET:
-            SolveSET(variables);
+            SolveSET(variables, tokens);
             break;
         case ADD:
-            SolveADD(variables);
+            SolveADD(variables, tokens);
             break;
         case PRINT:
-            SolvePRINT(variables);
+            SolvePRINT(variables, tokens);
             break;
         case READ:
-            SolveREAD(variables);
+            SolveREAD(variables, tokens);
             break;
         default:
             cout << "Unknown keyword/n";
     }
 }
 
-void HandleVariable(char* token) {
+void HandleVariable(string token) {
     cout << "VARIABLE: " << token << endl;
 }
 
-void HandleConstant(char* token) {
+void HandleConstant(string token) {
     cout << "CONSTANT: " << token << endl;
 }
 
-void SolveSET(unordered_map<char*, int>& variables)
+void SolveSET(unordered_map<string, int>& variables, vector<string>& tokens)
 {
-    char* variableName = strtok(NULL, delimiter);
-    char* value = strtok(NULL, delimiter);
+    string variableName = tokens[1];
+    string value = tokens[2];
 
-    if(value[strlen(variableName) - 1] == '\n') {
-        value[strlen(variableName) - 1] = '\0'; 
-    }
-
-    if(variableName == NULL) {
+    if(variableName.empty()) {
         cout << "Error: SET command requires a valid variable name.\n";
         return;
     }
@@ -117,16 +113,12 @@ void SolveSET(unordered_map<char*, int>& variables)
     return;
 }
 
-void SolveADD(unordered_map<char*, int>& variables)
+void SolveADD(unordered_map<string, int>& variables, vector<string>& tokens)
 {
-    char* variableName = strtok(NULL, delimiter);
-    char* value = strtok(NULL, delimiter);
+    string variableName = tokens[1];
+    string value = tokens[2];
 
-    if(value[strlen(variableName) - 1] == '\n') {
-        value[strlen(variableName) - 1] = '\0'; 
-    }
-
-    if(variableName == NULL) {
+    if(variableName.empty()) {
         cout << "Error: ADD command requires a valid variable name.\n";
         return;
     }
@@ -152,15 +144,11 @@ void SolveADD(unordered_map<char*, int>& variables)
     return;
 }
 
-void SolvePRINT(unordered_map<char*, int>& variables)
+void SolvePRINT(unordered_map<string, int>& variables, vector<string>& tokens)
 {
-    char* variableName = strtok(NULL, delimiter);
+    string variableName = tokens[1];
 
-    if(variableName[strlen(variableName) - 1] == '\n') {
-        variableName[strlen(variableName) - 1] = '\0'; 
-    }
-
-    if(variableName == NULL) {
+    if(variableName.empty()) {
         cout << "Error: PRINT command requires a valid variable name.\n";
         return;
     }   
@@ -168,22 +156,17 @@ void SolvePRINT(unordered_map<char*, int>& variables)
     return;
 }
 
-void SolveREAD(unordered_map<char*, int>& variables)
+void SolveREAD(unordered_map<string, int>& variables, vector<string>& tokens)
 {
-    char* variableName = strtok(NULL, delimiter);
+    string variableName = tokens[1];
 
-    if(variableName[strlen(variableName) - 1] == '\n') {
-        variableName[strlen(variableName) - 1] = '\0'; 
-    }
-    
-    if(variableName == NULL) {
+    if(variableName.empty()) {
         cout << "Error: READ command requires a valid variable name.\n";
         return;
     }
-    int ivalue = 2;
-    //cin>>ivalue;
+    int ivalue;
+    cin>>ivalue;
 
     variables[variableName] = ivalue;
-    cout<<variableName<<"g\n";
     return;
 }

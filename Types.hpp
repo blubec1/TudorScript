@@ -1,4 +1,8 @@
 #include<unordered_map>
+#include<string>
+#include<vector>
+using std::string;
+using std::vector;
 enum Type {
     KEYWORD,
     VARIABLE,
@@ -14,17 +18,20 @@ enum Keyword{
     UNKNOWNKEYWORD
 };
 
-constexpr char* delimiter = " /n/t";
+const string delimiter = " /n/t";
 
-Type detType(char* word);
-Keyword HandleKeyword(char* token);
-bool isKeyword(char* word);
-bool isVariable(char* word);
-bool isConstant(char* word);
-void HandleKeyword(std::unordered_map<char*, int> variables, char* token);
-void HandleVariable(char* token);
-void HandleConstant(char* token);
-void SolveSET(std::unordered_map<char*, int>& variables);
-void SolveADD(std::unordered_map<char*, int>& variables);
-void SolvePRINT(std::unordered_map<char*, int>& variables);
-void SolveREAD(std::unordered_map<char*, int>& variables);
+Type detType(string word);
+Keyword HandleKeyword(string token);
+
+bool isKeyword(string word);
+bool isVariable(string word);
+bool isConstant(string word);
+
+void HandleKeyword(std::unordered_map<string, int>& variables, vector<string>& tokens);
+void HandleVariable(string token);
+void HandleConstant(string token);
+
+void SolveSET(std::unordered_map<string, int>& variables, vector<string>& tokens);
+void SolveADD(std::unordered_map<string, int>& variables, vector<string>& tokens);
+void SolvePRINT(std::unordered_map<string, int>& variables, vector<string>& tokens);
+void SolveREAD(std::unordered_map<string, int>& variables, vector<string>& tokens);
