@@ -19,18 +19,23 @@ enum Keyword{
     ARRAY,
     SETINDEX,
     GETINDEX,
+    LABEL,
+    GOTO,
     UNKNOWNKEYWORD
 };
-const string keywords[] = {"SET","ADD","PRINT","READ","ARRAY","SETINDEX","GETINDEX"};
-const int nrOfKeywords = 8;
+const string keywords[] = {"SET","ADD","PRINT","READ","ARRAY","SETINDEX","GETINDEX","LABEL","GOTO"};
+const int nrOfKeywords = 9;
 const string delimiter = " /n/t";
 
 class Context
 {
     public:
+    int lineCounter = 0;
     unordered_map<string, int> variables;
     unordered_map<string, vector<int>> arrays;
+    unordered_map<string, int> labels; // For future label handling
     vector<string> tokens;
+    vector<vector<string>> lines; // To store lines of code if needed
 };
 
 Type detType(string word);
@@ -41,6 +46,7 @@ bool isVariable(string word);
 bool isConstant(string word);
 
 void HandleKeyword(Context& context);
+void PreprocessKeywords(Context& context);
 void HandleVariable(string token);
 void HandleConstant(string token);
 
@@ -51,3 +57,5 @@ void SolveREAD(Context& context);
 void SolveARRAY(Context& context);
 void SolveSETINDEX(Context& context);
 void SolveGETINDEX(Context& context);
+void SolveLABEL(Context& context);
+void SolveGOTO(Context& context);

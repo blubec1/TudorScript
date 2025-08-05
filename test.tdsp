@@ -1,12 +1,15 @@
 SET a 4
 ARRAY abc 3
 SETINDEX abc 0 a
+GOTO prim
 SET a 3
 SETINDEX abc 1 a
 SETINDEX abc 2 4
 GETINDEX abc b 0
+LABEL prim
 PRINT b
 GETINDEX abc b 1
 PRINT b
 GETINDEX abc b 2
 PRINT b
+GOTO prim

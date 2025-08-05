@@ -61,6 +61,15 @@ Keyword FindKeyword(string token) {
     return UNKNOWNKEYWORD;
 }
 
+void PreprocessKeywords(Context& context) {
+    Keyword foundKeyword = FindKeyword(context.tokens[0]);
+    switch(foundKeyword) {
+        case LABEL:
+            SolveLABEL(context);
+            break;
+    }
+}
+
 void HandleKeyword(Context& context) 
 {
     Keyword foundKeyword = FindKeyword(context.tokens[0]);
@@ -85,6 +94,12 @@ void HandleKeyword(Context& context)
             break;
         case GETINDEX:
             SolveGETINDEX(context);
+            break;
+        case LABEL:
+            // Labels are preprocessed and not handled here.
+            break;
+        case GOTO:
+            SolveGOTO(context);
             break;
         default:
             cout << "Unknown keyword/n";
@@ -263,4 +278,25 @@ void SolveGETINDEX(Context& context)
 
     context.variables[variableName] = context.arrays[arrayName][index];
 
+}
+
+void SolveLABEL(Context& context)
+{
+    string labelName = context.tokens[1];
+    if(labelName.empty()) {
+        cout << "Error: LABEL command requires a valid label name.\n";
+        return;
+    }
+    context.labels[labelName] = context.lineCounter; // Store the line number for the label
+}
+
+void SolveGOTO(Context& context)
+{
+    string labelName = context.tokens[1];
+    if(labelName.empty()) {
+        cout << "Error: GOTO command requires a valid label name.\n";
+        return;
+    }
+
+    context.lineCounter = context.labels[labelName]; // Jump to the line number of the label
 }

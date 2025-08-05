@@ -39,17 +39,24 @@ int main(int argc, char *argv[])
         cout<<"File doesn't exist";
         return -1;
     }
-    //main loop function
+    //read everything into lines
     while(fgets(buffer,maxCharactersperLine,fptr))
     {
-        buffer[strcspn(buffer, "\n")] = 0; // Remove newline character if present
-        buffer[strcspn(buffer, "\r")] = 0; // Remove carriage return
-        context.tokens.clear();
-
         Tokenize(buffer, context.tokens);
+        PreprocessKeywords(context);
+        context.lines.push_back(context.tokens);
+        context.tokens.clear();
+        context.lineCounter++;
+    }
 
+    context.lineCounter = 0; // Reset line counter for processing
+    while(context.lineCounter < context.lines.size())
+    {
+        context.tokens = context.lines[context.lineCounter];
+        if(context.tokens.empty()) continue; // Skip empty lines
         Type wordType = detType(context.tokens[0]);
         HandleKeyword(context);
+        context.lineCounter++;
     }
     fclose(fptr);
 
