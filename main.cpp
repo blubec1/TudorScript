@@ -27,11 +27,9 @@ int main(int argc, char *argv[])
         return -2;
     }
     */
-    vector<string> tokens;
-    unordered_map<string, int> variables;
-    unordered_map<string, vector<int>> arrays;
+    Context context;
     buffer = new char[maxCharactersperLine];
-    tokens.reserve(maxCharactersperLine);
+    context.tokens.reserve(maxCharactersperLine);
     //path = argv[1];
     path = "test.tdsp";
     fptr = fopen(path, "r");
@@ -46,13 +44,12 @@ int main(int argc, char *argv[])
     {
         buffer[strcspn(buffer, "\n")] = 0; // Remove newline character if present
         buffer[strcspn(buffer, "\r")] = 0; // Remove carriage return
-        tokens.clear();
+        context.tokens.clear();
 
-        Tokenize(buffer, tokens);
+        Tokenize(buffer, context.tokens);
 
-        Type wordType = detType(tokens[0]);
-        
-        HandleKeyword(arrays, variables, tokens);
+        Type wordType = detType(context.tokens[0]);
+        HandleKeyword(context);
     }
     fclose(fptr);
 

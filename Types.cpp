@@ -61,29 +61,30 @@ Keyword FindKeyword(string token) {
     return UNKNOWNKEYWORD;
 }
 
-void HandleKeyword(unordered_map<string, vector<int>>& arrays, unordered_map<string, int>& variables, vector<string>& tokens) {
-    Keyword foundKeyword = FindKeyword(tokens[0]);
+void HandleKeyword(Context& context) 
+{
+    Keyword foundKeyword = FindKeyword(context.tokens[0]);
     switch (foundKeyword) {
         case SET:
-            SolveSET(variables, tokens);
+            SolveSET(context);
             break;
         case ADD:
-            SolveADD(variables, tokens);
+            SolveADD(context);
             break;
         case PRINT:
-            SolvePRINT(variables, tokens);
+            SolvePRINT(context);
             break;
         case READ:
-            SolveREAD(variables, tokens);
+            SolveREAD(context);
             break;
         case ARRAY:
-            SolveARRAY(arrays, tokens);
+            SolveARRAY(context);
             break;
         case SETINDEX:
-            SolveSETINDEX(arrays, variables, tokens);
+            SolveSETINDEX(context);
             break;
         case GETINDEX:
-            SolveGETINDEX(arrays, variables, tokens);
+            SolveGETINDEX(context);
             break;
         default:
             cout << "Unknown keyword/n";
@@ -98,10 +99,10 @@ void HandleConstant(string token) {
     cout << "CONSTANT: " << token << endl;
 }
 
-void SolveSET(unordered_map<string, int>& variables, vector<string>& tokens)
+void SolveSET(Context& context)
 {
-    string variableName = tokens[1];
-    string value = tokens[2];
+    string variableName = context.tokens[1];
+    string value = context.tokens[2];
 
     if(variableName.empty()) {
         cout << "Error: SET command requires a valid variable name.\n";
@@ -110,7 +111,7 @@ void SolveSET(unordered_map<string, int>& variables, vector<string>& tokens)
 
     try{
         int ivalue = stoi(value);
-        variables[variableName] = ivalue;
+        context.variables[variableName] = ivalue;
     }
     catch(exception& e) {
         cout << "Error: value is not an integer\n";
@@ -119,10 +120,10 @@ void SolveSET(unordered_map<string, int>& variables, vector<string>& tokens)
     return;
 }
 
-void SolveADD(unordered_map<string, int>& variables, vector<string>& tokens)
+void SolveADD(Context& context)
 {
-    string variableName = tokens[1];
-    string value = tokens[2];
+    string variableName = context.tokens[1];
+    string value = context.tokens[2];
 
     if(variableName.empty()) {
         cout << "Error: ADD command requires a valid variable name.\n";
@@ -130,13 +131,13 @@ void SolveADD(unordered_map<string, int>& variables, vector<string>& tokens)
     }
     if(isVariable(value))
     {
-        variables[variableName] += variables[value];
+        context.variables[variableName] += context.variables[value];
     }
     else if(isConstant(value))
     {
         try {
             int ivalue = stoi(value);
-            variables[variableName] += ivalue;
+            context.variables[variableName] += ivalue;
         } catch (exception& e) {
             cout << "Error: value is not an integer\n";
             return;
@@ -150,21 +151,21 @@ void SolveADD(unordered_map<string, int>& variables, vector<string>& tokens)
     return;
 }
 
-void SolvePRINT(unordered_map<string, int>& variables, vector<string>& tokens)
+void SolvePRINT(Context& context)
 {
-    string variableName = tokens[1];
+    string variableName = context.tokens[1];
 
     if(variableName.empty()) {
         cout << "Error: PRINT command requires a valid variable name.\n";
         return;
     }   
-    cout<<variables[variableName]<<"\n";
+    cout<<context.variables[variableName]<<"\n";
     return;
 }
 
-void SolveREAD(unordered_map<string, int>& variables, vector<string>& tokens)
+void SolveREAD(Context& context)
 {
-    string variableName = tokens[1];
+    string variableName = context.tokens[1];
 
     if(variableName.empty()) {
         cout << "Error: READ command requires a valid variable name.\n";
@@ -173,43 +174,43 @@ void SolveREAD(unordered_map<string, int>& variables, vector<string>& tokens)
     int ivalue;
     cin>>ivalue;
 
-    variables[variableName] = ivalue;
+    context.variables[variableName] = ivalue;
     return;
 }
 
-void SolveARRAY(unordered_map<string, vector<int>>& arrays, vector<string>& tokens)
+void SolveARRAY(Context& context)
 {
-    string arrayName = tokens[1];
+    string arrayName = context.tokens[1];
     int size;
     try {
-        size = stoi(tokens[2]);
+        size = stoi(context.tokens[2]);
     } catch (exception& e) {
         cout << "Error: Size is not a valid integer.\n";
         return;
     }
 
-    arrays[arrayName] = vector<int>(size, 0); // Initialize array with zeros
+    context.arrays[arrayName] = vector<int>(size, 0); // Initialize array with zeros
 }
 
-void SolveSETINDEX(unordered_map<string, vector<int>>& arrays, unordered_map<string, int>& variables, vector<string>& tokens)
+void SolveSETINDEX(Context& context)
 {
-    string arrayName = tokens[1];
+    string arrayName = context.tokens[1];
     int index;
     try {
-        index = stoi(tokens[2]);
+        index = stoi(context.tokens[2]);
     } catch (exception& e) {
         cout << "Error: Index is not a valid integer.\n";
         return;
     }
 
-    string value = tokens[3];
+    string value = context.tokens[3];
     
-    if(arrays.find(arrayName) == arrays.end()) {
+    if(context.arrays.find(arrayName) == context.arrays.end()) {
         cout << "Error: Array does not exist.\n";
         return;
     }
     
-    if(index < 0 || index >= arrays[arrayName].size()) {
+    if(index < 0 || index >= context.arrays[arrayName].size()) {
         cout << "Error: Index out of bounds.\n";
         return;
     }
@@ -219,16 +220,16 @@ void SolveSETINDEX(unordered_map<string, vector<int>>& arrays, unordered_map<str
         return;
     }
 
-    if(isVariable(value) && variables.find(value) != variables.end())
+    if(isVariable(value) && context.variables.find(value) != context.variables.end())
     {
-        arrays[arrayName][index] = variables[value];
+        context.arrays[arrayName][index] = context.variables[value];
         return;
     }
     else if(isConstant(value))
     {
         try{
             int ivalue = stoi(value);
-            arrays[arrayName][index] = ivalue;
+            context.arrays[arrayName][index] = ivalue;
         }
         catch (exception& e) {
             cout << "Error: Value is not a valid integer.\n";
@@ -237,29 +238,29 @@ void SolveSETINDEX(unordered_map<string, vector<int>>& arrays, unordered_map<str
     }
 }
 
-void SolveGETINDEX(unordered_map<string, vector<int>>& arrays, unordered_map<string, int>& variables, vector<string>& tokens)
+void SolveGETINDEX(Context& context)
 {
 
-    string arrayName = tokens[1];
-    string variableName = tokens[2];
+    string arrayName = context.tokens[1];
+    string variableName = context.tokens[2];
     int index;
     try {
-        index = stoi(tokens[3]);
+        index = stoi(context.tokens[3]);
     } catch (exception& e) {
         cout << "Error: Index is not a valid integer.\n";
         return;
     }
 
-    if(arrays.find(arrayName) == arrays.end()) {
+    if(context.arrays.find(arrayName) == context.arrays.end()) {
         cout << "Error: Array does not exist.\n";
         return;
     }
     
-    if(index < 0 || index >= arrays[arrayName].size()) {
+    if(index < 0 || index >= context.arrays[arrayName].size()) {
         cout << "Error: Index out of bounds.\n";
         return;
     }
 
-    variables[variableName] = arrays[arrayName][index];
+    context.variables[variableName] = context.arrays[arrayName][index];
 
 }

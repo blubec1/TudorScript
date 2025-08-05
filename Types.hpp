@@ -3,6 +3,7 @@
 #include<vector>
 using std::string;
 using std::vector;
+using std::unordered_map;
 enum Type {
     KEYWORD,
     VARIABLE,
@@ -24,6 +25,14 @@ const string keywords[] = {"SET","ADD","PRINT","READ","ARRAY","SETINDEX","GETIND
 const int nrOfKeywords = 8;
 const string delimiter = " /n/t";
 
+class Context
+{
+    public:
+    unordered_map<string, int> variables;
+    unordered_map<string, vector<int>> arrays;
+    vector<string> tokens;
+};
+
 Type detType(string word);
 Keyword HandleKeyword(string token);
 
@@ -31,14 +40,14 @@ bool isKeyword(string word);
 bool isVariable(string word);
 bool isConstant(string word);
 
-void HandleKeyword(std::unordered_map<string, vector<int>>& arrays, std::unordered_map<string, int>& variables, vector<string>& tokens);
+void HandleKeyword(Context& context);
 void HandleVariable(string token);
 void HandleConstant(string token);
 
-void SolveSET(std::unordered_map<string, int>& variables, vector<string>& tokens);
-void SolveADD(std::unordered_map<string, int>& variables, vector<string>& tokens);
-void SolvePRINT(std::unordered_map<string, int>& variables, vector<string>& tokens);
-void SolveREAD(std::unordered_map<string, int>& variables, vector<string>& tokens);
-void SolveARRAY(std::unordered_map<string, vector<int>>& arrays, vector<string>& tokens);
-void SolveSETINDEX(std::unordered_map<string, vector<int>>& arrays, std::unordered_map<string, int>& variables, vector<string>& tokens);
-void SolveGETINDEX(std::unordered_map<string, vector<int>>& arrays, std::unordered_map<string, int>& variables, vector<string>& tokens);
+void SolveSET(Context& context);
+void SolveADD(Context& context);
+void SolvePRINT(Context& context);
+void SolveREAD(Context& context);
+void SolveARRAY(Context& context);
+void SolveSETINDEX(Context& context);
+void SolveGETINDEX(Context& context);
