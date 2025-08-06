@@ -25,16 +25,11 @@ bool isKeyword(string word) {
 }
 
 bool isVariable(string word) {
-    if (!(('a' <= word[0] && word[0] <= 'z') ||('A' <= word[0] && word[0] <= 'Z') || word[0] == '_')) {
+    if(!isAlphaOrUnderscore(word[0])) {
         return false;
     }
     for (int i = 1; i < word.length(); ++i) {
-        if(word[i] == '\n')
-            continue;
-        if (!('a' <= word[i] && word[i] <= 'z') &&
-            !('A' <= word[i] && word[i] <= 'Z') &&
-            !('0' <= word[i] && word[i] <= '9') &&
-            word[i] != '_') {
+        if (!isAlphaOrUnderscore(word[i]) && !isDigit(word[i])) {
             return false;
         }
     }
@@ -43,13 +38,21 @@ bool isVariable(string word) {
 
 bool isConstant(string word) {
     for (int i = 0; i < word.length(); ++i) {
-        if(word[i] == '\n')
-            continue;
-        if (!('0' <= word[i] && word[i] <= '9') && !(word[i] == '-' && i == 0)) {
+        if (!isDigit(word[i]) && !(word[i] == '-' && i == 0)) {
             return false;
         }
     }
     return true;
+}
+
+bool isAlphaOrUnderscore(char c)
+{
+    return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || (c == '_');
+}
+
+bool isDigit(char c)
+{
+    return '0' <= c && c <= '9';
 }
 
 Keyword FindKeyword(string token) {

@@ -52,6 +52,8 @@ Keyword HandleKeyword(string token);
 bool isKeyword(string word);
 bool isVariable(string word);
 bool isConstant(string word);
+bool isAlphaOrUnderscore(char c);
+bool isDigit(char c);
 
 void HandleKeyword(Context& context);
 void PreprocessKeywords(Context& context);
