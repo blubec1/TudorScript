@@ -21,10 +21,17 @@ enum Keyword{
     GETINDEX,
     LABEL,
     GOTO,
+    IFGOTO,
+    EQ,
+    LT,
+    GT,
+    LTE,
+    GTE,
+    NEQ,
     UNKNOWNKEYWORD
 };
-const string keywords[] = {"SET","ADD","PRINT","READ","ARRAY","SETINDEX","GETINDEX","LABEL","GOTO"};
-const int nrOfKeywords = 9;
+const string keywords[] = {"SET","ADD","PRINT","READ","ARRAY","SETINDEX","GETINDEX","LABEL","GOTO","IFGOTO","EQ","LT","GT","LTE","GTE","NEQ"};
+const int nrOfKeywords = 16;
 const string delimiter = " /n/t";
 
 class Context
@@ -59,3 +66,10 @@ void SolveSETINDEX(Context& context);
 void SolveGETINDEX(Context& context);
 void SolveLABEL(Context& context);
 void SolveGOTO(Context& context);
+void SolveIFGOTO(Context& context);
+void SolveEQ(Context& context);
+void SolveLT(Context& context);
+void SolveGT(Context& context);
+void SolveLTE(Context& context);
+void SolveGTE(Context& context);
+void SolveNEQ(Context& context);
