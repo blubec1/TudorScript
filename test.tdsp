@@ -5,18 +5,18 @@ ARRAY abc 100
 LABEL loop
 READ b
 SETINDEX abc c b
-ADD a -1
+ADD a a -1
 GETINDEX abc d c
 PRINT d
-ADD c 1
+ADD c c 1
 IFGOTO a loop
 SET c 0
 SET d 0
 SET b 0
 LABEL loop2
 GETINDEX abc d c
-ADD b d
-ADD aa -1
-ADD c 1
+ADD b b d
+ADD aa aa -1
+ADD c c 1
 IFGOTO aa loop2
 PRINT b

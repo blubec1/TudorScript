@@ -26,11 +26,12 @@ int main(int argc, char *argv[])
         cout<<"Insuficient arguments";
         return -2;
     }
-    */
+        */
+    
     Context context;
     buffer = new char[maxCharactersperLine];
     context.tokens.reserve(maxCharactersperLine);
-    //path = argv[1];
+    path = argv[1];
     path = "test.tdsp";
     fptr = fopen(path, "r");
 

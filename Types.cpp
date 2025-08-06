@@ -77,9 +77,6 @@ void HandleKeyword(Context& context)
         case SET:
             SolveSET(context);
             break;
-        case ADD:
-            SolveADD(context);
-            break;
         case PRINT:
             SolvePRINT(context);
             break;
@@ -104,23 +101,26 @@ void HandleKeyword(Context& context)
         case IFGOTO:
             SolveIFGOTO(context);
             break;
+        case ADD:
+            SolveOPERATOR(context, [](int& a, int& b) { return a + b; });
+            break;
         case EQ:
-            SolveEQ(context);
+            SolveOPERATOR(context, [](int& a, int& b) { return a == b; });
             break;
         case LT:
-            SolveLT(context);
+            SolveOPERATOR(context, [](int& a, int& b) { return a < b; });
             break;
         case GT:
-            SolveGT(context);
+            SolveOPERATOR(context, [](int& a, int& b) { return a > b; });
             break;
         case LTE:
-            SolveLTE(context);
+            SolveOPERATOR(context, [](int& a, int& b) { return a <= b; });
             break;
         case GTE:
-            SolveGTE(context);
+            SolveOPERATOR(context, [](int& a, int& b) { return a >= b; });
             break;
         case NEQ:
-            SolveNEQ(context);
+            SolveOPERATOR(context, [](int& a, int& b) { return a != b; });
             break;
         default:
             cout << "Unknown keyword/n";
@@ -159,37 +159,6 @@ void SolveSET(Context& context)
     }
     else {
         cout << "Error: Invalid value for SET command.\n";
-        return;
-    }
-    return;
-}
-
-void SolveADD(Context& context)
-{
-    string variableName = context.tokens[1];
-    string value = context.tokens[2];
-
-    if(variableName.empty()) {
-        cout << "Error: ADD command requires a valid variable name.\n";
-        return;
-    }
-    if(isVariable(value))
-    {
-        context.variables[variableName] += context.variables[value];
-    }
-    else if(isConstant(value))
-    {
-        try {
-            int ivalue = stoi(value);
-            context.variables[variableName] += ivalue;
-        } catch (exception& e) {
-            cout << "Error: value is not an integer\n";
-            return;
-        }
-    }
-    else
-    {
-        cout << "Error: Invalid value for ADD command.\n";
         return;
     }
     return;
@@ -387,145 +356,64 @@ void SolveIFGOTO(Context& context)
         context.lineCounter = context.labels[labelName]; // Jump to the line number of the label
     }
 }
-//EQ <rezultat> <variableA> <variableB>
-void SolveEQ(Context& context)
+void SolveOPERATOR(Context& context, std::function<int(int&, int&)> func)
 {
     string resultVar = context.tokens[1];
     string varA = context.tokens[2];
     string varB = context.tokens[3];
 
-    if(resultVar.empty() || varA.empty() || varB.empty()) {
-        cout << "Error: EQ command requires valid variable names.\n";
+    int valueA, valueB;
+
+    if(!isVariable(resultVar)) {
+        cout << "Error: OPERATOR command requires valid variable names.\n";
         return;
     }
 
-    if(context.variables.find(varA) == context.variables.end()) {
-        cout << "Error: First variable does not exist.\n";
-        return;
+    if(isVariable(varA))
+    {
+        if(context.variables.find(varA) == context.variables.end()) {
+            cout << "Error: First variable does not exist.\n";
+            return;
+        }
+        valueA = context.variables[varA];
     }
-    if(context.variables.find(varB) == context.variables.end()) {
-        cout << "Error: Second variable does not exist.\n";
-        return;
+    else if(isConstant(varA))
+    {
+        try {
+            valueA = stoi(varA);
+        } catch (exception& e) {
+            cout << "Error: First variable is not a valid integer.\n";
+            return;
+        }
     }
-
-    context.variables[resultVar] = (context.variables[varA] == context.variables[varB]);
-}
-
-void SolveLT(Context& context)
-{
-    string resultVar = context.tokens[1];
-    string varA = context.tokens[2];
-    string varB = context.tokens[3];
-
-    if(resultVar.empty() || varA.empty() || varB.empty()) {
-        cout << "Error: EQ command requires valid variable names.\n";
-        return;
-    }
-
-    if(context.variables.find(varA) == context.variables.end()) {
-        cout << "Error: First variable does not exist.\n";
-        return;
-    }
-    if(context.variables.find(varB) == context.variables.end()) {
-        cout << "Error: Second variable does not exist.\n";
+    else
+    {
+        cout << "Error: First variable is not valid.\n";
         return;
     }
 
-    context.variables[resultVar] = (context.variables[varA] < context.variables[varB]);
-}
-
-void SolveGT(Context& context)
-{
-    string resultVar = context.tokens[1];
-    string varA = context.tokens[2];
-    string varB = context.tokens[3];
-
-    if(resultVar.empty() || varA.empty() || varB.empty()) {
-        cout << "Error: EQ command requires valid variable names.\n";
+    if(isVariable(varB))
+    {
+        if(context.variables.find(varB) == context.variables.end()) {
+            cout << "Error: First variable does not exist.\n";
+            return;
+        }
+        valueB = context.variables[varB];
+    }
+    else if(isConstant(varB))
+    {
+        try {
+            valueB = stoi(varB);
+        } catch (exception& e) {
+            cout << "Error: Second variable is not a valid integer.\n";
+            return;
+        }
+    }
+    else
+    {
+        cout << "Error: Second variable is not valid.\n";
         return;
     }
 
-    if(context.variables.find(varA) == context.variables.end()) {
-        cout << "Error: First variable does not exist.\n";
-        return;
-    }
-    if(context.variables.find(varB) == context.variables.end()) {
-        cout << "Error: Second variable does not exist.\n";
-        return;
-    }
-
-    context.variables[resultVar] = (context.variables[varA] > context.variables[varB]);
-
-}
-
-void SolveLTE(Context& context)
-{
-    string resultVar = context.tokens[1];
-    string varA = context.tokens[2];
-    string varB = context.tokens[3];
-
-    if(resultVar.empty() || varA.empty() || varB.empty()) {
-        cout << "Error: EQ command requires valid variable names.\n";
-        return;
-    }
-
-    if(context.variables.find(varA) == context.variables.end()) {
-        cout << "Error: First variable does not exist.\n";
-        return;
-    }
-    if(context.variables.find(varB) == context.variables.end()) {
-        cout << "Error: Second variable does not exist.\n";
-        return;
-    }
-
-    context.variables[resultVar] = (context.variables[varA] <= context.variables[varB]);
-
-}
-
-void SolveGTE(Context& context)
-{
-    string resultVar = context.tokens[1];
-    string varA = context.tokens[2];
-    string varB = context.tokens[3];
-
-    if(resultVar.empty() || varA.empty() || varB.empty()) {
-        cout << "Error: EQ command requires valid variable names.\n";
-        return;
-    }
-
-    if(context.variables.find(varA) == context.variables.end()) {
-        cout << "Error: First variable does not exist.\n";
-        return;
-    }
-    if(context.variables.find(varB) == context.variables.end()) {
-        cout << "Error: Second variable does not exist.\n";
-        return;
-    }
-
-    context.variables[resultVar] = (context.variables[varA] >= context.variables[varB]);
-
-}
-
-void SolveNEQ(Context& context)
-{
-    string resultVar = context.tokens[1];
-    string varA = context.tokens[2];
-    string varB = context.tokens[3];
-
-    if(resultVar.empty() || varA.empty() || varB.empty()) {
-        cout << "Error: EQ command requires valid variable names.\n";
-        return;
-    }
-
-    if(context.variables.find(varA) == context.variables.end()) {
-        cout << "Error: First variable does not exist.\n";
-        return;
-    }
-    if(context.variables.find(varB) == context.variables.end()) {
-        cout << "Error: Second variable does not exist.\n";
-        return;
-    }
-
-    context.variables[resultVar] = (context.variables[varA] != context.variables[varB]);
-
+    context.variables[resultVar] = func(valueA, valueB);
 }

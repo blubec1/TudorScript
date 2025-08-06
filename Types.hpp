@@ -1,6 +1,7 @@
 #include<unordered_map>
 #include<string>
 #include<vector>
+#include<functional>
 using std::string;
 using std::vector;
 using std::unordered_map;
@@ -67,9 +68,4 @@ void SolveGETINDEX(Context& context);
 void SolveLABEL(Context& context);
 void SolveGOTO(Context& context);
 void SolveIFGOTO(Context& context);
-void SolveEQ(Context& context);
-void SolveLT(Context& context);
-void SolveGT(Context& context);
-void SolveLTE(Context& context);
-void SolveGTE(Context& context);
-void SolveNEQ(Context& context);
+void SolveOPERATOR(Context& context, std::function<int(int&, int&)> func);
