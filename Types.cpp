@@ -144,6 +144,7 @@ void SolveSET(Context& context)
     string value = context.tokens[2];
 
     if(variableName.empty()) {
+        PrintLine(context);
         cout << "Error: SET command requires a valid variable name.\n";
         return;
     }
@@ -153,6 +154,7 @@ void SolveSET(Context& context)
             context.variables[variableName] = ivalue;
         }
         catch(exception& e) {
+            PrintLine(context);
             cout << "Error: value is not an integer\n";
             return;
         }
@@ -161,6 +163,7 @@ void SolveSET(Context& context)
         context.variables[variableName] = context.variables[value];
     }
     else {
+        PrintLine(context);
         cout << "Error: Invalid value for SET command.\n";
         return;
     }
@@ -172,6 +175,7 @@ void SolvePRINT(Context& context)
     string variableName = context.tokens[1];
 
     if(variableName.empty()) {
+        PrintLine(context);
         cout << "Error: PRINT command requires a valid variable name.\n";
         return;
     }   
@@ -184,6 +188,7 @@ void SolveREAD(Context& context)
     string variableName = context.tokens[1];
 
     if(variableName.empty()) {
+        PrintLine(context);
         cout << "Error: READ command requires a valid variable name.\n";
         return;
     }
@@ -201,6 +206,7 @@ void SolveARRAY(Context& context)
     try {
         size = stoi(context.tokens[2]);
     } catch (exception& e) {
+        PrintLine(context);
         cout << "Error: Size is not a valid integer.\n";
         return;
     }
@@ -217,6 +223,7 @@ void SolveSETINDEX(Context& context)
         try {
             index = stoi(context.tokens[2]);
         } catch (exception& e) {
+            PrintLine(context);
             cout << "Error: Index is not a valid integer.\n";
             return;
         }
@@ -227,6 +234,7 @@ void SolveSETINDEX(Context& context)
     }
     else
     {
+        PrintLine(context);
         cout << "Error: Index is not a validvariable.\n";
         return;
     }
@@ -234,16 +242,19 @@ void SolveSETINDEX(Context& context)
     string value = context.tokens[3];
     
     if(context.arrays.find(arrayName) == context.arrays.end()) {
+        PrintLine(context);
         cout << "Error: Array does not exist.\n";
         return;
     }
     
     if(index < 0 || index >= context.arrays[arrayName].size()) {
+        PrintLine(context);
         cout << "Error: Index out of bounds.\n";
         return;
     }
 
     if(value.empty()) {
+        PrintLine(context);
         cout << "Error: SETINDEX command requires a valid array name.\n";
         return;
     }
@@ -260,6 +271,7 @@ void SolveSETINDEX(Context& context)
             context.arrays[arrayName][index] = ivalue;
         }
         catch (exception& e) {
+            PrintLine(context);
             cout << "Error: Value is not a valid integer.\n";
         }
         return;
@@ -278,6 +290,7 @@ void SolveGETINDEX(Context& context)
         try {
             index = stoi(context.tokens[3]);
         } catch (exception& e) {
+            PrintLine(context);
             cout << "Error: Index is not a valid integer.\n";
             return;
         }
@@ -288,16 +301,19 @@ void SolveGETINDEX(Context& context)
     }
     else
     {
+        PrintLine(context);
         cout << "Error: Index is not a validvariable.\n";
         return;
     }
 
     if(context.arrays.find(arrayName) == context.arrays.end()) {
+        PrintLine(context);
         cout << "Error: Array does not exist.\n";
         return;
     }
     
     if(index < 0 || index >= context.arrays[arrayName].size()) {
+        PrintLine(context);
         cout << "Error: Index out of bounds.\n";
         return;
     }
@@ -310,6 +326,7 @@ void SolveLABEL(Context& context)
 {
     string labelName = context.tokens[1];
     if(labelName.empty()) {
+        PrintLine(context);
         cout << "Error: LABEL command requires a valid label name.\n";
         return;
     }
@@ -320,6 +337,7 @@ void SolveGOTO(Context& context)
 {
     string labelName = context.tokens[1];
     if(labelName.empty()) {
+        PrintLine(context);
         cout << "Error: GOTO command requires a valid label name.\n";
         return;
     }
@@ -339,18 +357,22 @@ void SolveIFGOTO(Context& context)
     string labelName = context.tokens[2];
 
     if(variableName.empty()) {
+        PrintLine(context);
         cout << "Error: IFGOTO command requires a valid variable name.\n";
         return;
     }
     if(labelName.empty()) {
+        PrintLine(context);
         cout << "Error: IFGOTO command requires a valid label name.\n";
         return;
     }
     if(context.variables.find(variableName) == context.variables.end()) {
+        PrintLine(context);
         cout << "Error: Variable does not exist.\n";
         return;
     }
     if(context.labels.find(labelName) == context.labels.end()) {
+        PrintLine(context);
         cout << "Error: Label does not exist.\n";
         return;
     }
@@ -368,6 +390,7 @@ void SolveOPERATOR(Context& context, std::function<int(int&, int&)> func)
     int valueA, valueB;
 
     if(!isVariable(resultVar)) {
+        PrintLine(context);
         cout << "Error: OPERATOR command requires valid variable names.\n";
         return;
     }
@@ -375,6 +398,7 @@ void SolveOPERATOR(Context& context, std::function<int(int&, int&)> func)
     if(isVariable(varA))
     {
         if(context.variables.find(varA) == context.variables.end()) {
+            PrintLine(context);
             cout << "Error: First variable does not exist.\n";
             return;
         }
@@ -385,12 +409,14 @@ void SolveOPERATOR(Context& context, std::function<int(int&, int&)> func)
         try {
             valueA = stoi(varA);
         } catch (exception& e) {
+            PrintLine(context);
             cout << "Error: First variable is not a valid integer.\n";
             return;
         }
     }
     else
     {
+        PrintLine(context);
         cout << "Error: First variable is not valid.\n";
         return;
     }
@@ -398,6 +424,7 @@ void SolveOPERATOR(Context& context, std::function<int(int&, int&)> func)
     if(isVariable(varB))
     {
         if(context.variables.find(varB) == context.variables.end()) {
+            PrintLine(context);
             cout << "Error: First variable does not exist.\n";
             return;
         }
@@ -408,15 +435,22 @@ void SolveOPERATOR(Context& context, std::function<int(int&, int&)> func)
         try {
             valueB = stoi(varB);
         } catch (exception& e) {
+            PrintLine(context);
             cout << "Error: Second variable is not a valid integer.\n";
             return;
         }
     }
     else
     {
+        PrintLine(context);
         cout << "Error: Second variable is not valid.\n";
         return;
     }
 
     context.variables[resultVar] = func(valueA, valueB);
+}
+
+void PrintLine(const Context& context) 
+{
+    cout << "L " << context.lineCounter + 1 << ": ";
 }

@@ -71,3 +71,4 @@ void SolveLABEL(Context& context);
 void SolveGOTO(Context& context);
 void SolveIFGOTO(Context& context);
 void SolveOPERATOR(Context& context, std::function<int(int&, int&)> func);
+void PrintLine(const Context& context);
